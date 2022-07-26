@@ -1,8 +1,12 @@
 const express = require('express');
 const morgan = require('morgan');
 const studentRouter = require('./studentRoute');
-// const userRouter = require('./routes/user-route');
 const app = express();
+
+// const userRouter = require('./routes/user-route');
+
+
+
 
 // 1) MIDDLEWARES
 app.use(morgan('dev'));

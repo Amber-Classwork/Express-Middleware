@@ -1,9 +1,7 @@
-const express = require('express');
 const fs = require('fs');
 const DATA_FILE = `${__dirname}/data.json`;
-const students = JSON.parse(
-  fs.readFileSync(DATA_FILE)
-);
+
+const {Student} = require("./schema/student.schema")
 
 exports.checkStudentID = (req, res, next, val) =>{
   if(req.params.id * 1 > students.length){
@@ -15,7 +13,8 @@ exports.checkStudentID = (req, res, next, val) =>{
   next();
 }
 
-exports.getAllStudents = (req, res) =>{
+exports.getAllStudents = async (req, res) =>{
+    const students = await Student.find();
   res.status(200).json({
       status: 'success',
       results: students.length,
