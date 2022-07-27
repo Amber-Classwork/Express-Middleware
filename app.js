@@ -2,6 +2,7 @@ const express = require('express');
 const morgan = require('morgan');
 const studentRouter = require('./studentRoute');
 const app = express();
+const cors = require('cors');
 
 // const userRouter = require('./routes/user-route');
 
@@ -9,6 +10,7 @@ const app = express();
 
 
 // 1) MIDDLEWARES
+app.use(cors());
 app.use(morgan('dev'));
 app.use(express.json());
 
