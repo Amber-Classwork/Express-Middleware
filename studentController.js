@@ -3,83 +3,111 @@ const DATA_FILE = `${__dirname}/data.json`;
 
 const {Student} = require("./schema/student.schema")
 
-exports.checkStudentID = (req, res, next, val) =>{
-  if(req.params.id * 1 > students.length){
-    return res.status(404).json({
-      status: 'fail',
-      message: 'Invalid ID'
-    });
-  }
-  next();
-}
+// exports.checkStudentID = (req, res, next, val) =>{
+//   if(req.params.id * 1 > students.length){
+//     return res.status(404).json({
+//       status: 'fail',
+//       message: 'Invalid ID'
+//     });
+//   }
+//   next();
+// }
 
 exports.getAllStudents = async (req, res) =>{
-    const students = await Student.find();
-  res.status(200).json({
-      status: 'success',
-      results: students.length,
-      data: {
-        students
-      }
-  });
+    try{
+        const students = await Student.find();
+        res.status(200).json({
+            status: 'success',
+            results: students.length,
+            data: {
+              students
+            }
+        });
+    }catch(error){
+        res.status(404).json({
+            status: 'fail',
+            message: err
+        })
+    }
+
 }
 
-exports.createAdvanceStudent = (req, res) =>{
-  const newId = students[students.length - 1].id + 1;
-  const newStudent = Object.assign({id: newId}, req.body);
-  students.push(newStudent);
-  fs.writeFile(DATA_FILE, JSON.stringify(students), err =>{
+exports.createAdvanceStudent = async (req, res) =>{
+  try{
+    const student = await new Student(req.body).save()
       res.status(201).json({
-        status: 'success',
-        data: {
-          student: newStudent
-        }
-      })
-  })
-}
-
-exports.getStudentByIdEx2 = (req, res) =>{
-  // console.log(req.params);
-   const varID = req.params.id * 1;
-
-  const student = students.find(item => item.id === varID) ;
-  if(student !== undefined){
-    res.status(200).json({
         status: 'success',
         data: {
           student
         }
-    });
-  }else{
+      })
+  }catch(error){
     res.status(404).json({
-      status: 'fail',
-      message: 'Record not found. Invalid ID!'
-  });
+        status: 'fail',
+        message: error
+    })
   }
 }
-exports.updateStudent = (req, res) =>{
-   res.status(200).json({
-    status: 'success',
-    data:{
-      student: '[The Updated Student Here]'
+
+exports.getStudentById = async (req, res) =>{
+   try{
+        const varID = req.params.id;
+
+        const student = await Student.findById(varID);
+
+        if(student){
+            return res.status(200).json({
+                status: 'success',
+                data: {
+                student
+                }
+            });
+        }else{
+            return res.status(404).json({
+            status: 'fail',
+            message: 'Record not found. Invalid ID!'
+        });
+        }
+   }catch(error){
+        res.status(404).json({
+            status: 'fail',
+            message: error.message
+        })
     }
-  });
 }
-exports.updateStudent2 = (req, res) =>{
-//
+exports.updateStudent = async (req, res) =>{
+    try{
+        let id = req.params.id;
+        let student = await Student.findByIdAndUpdate(id,req.body);
+        res.status(200).json({
+            status: 'success',
+            data:{
+              student
+            }
+          });
+    }catch(error){
+        res.status(404).json({
+            status: 'fail',
+            error: error.message
+          });
+    }
 }
-exports.deleteStudent =  (req, res) =>{
-  // if(req.params.id * 1 > students.length){
-  //   return res.status(404).json({
-  //     status: 'fail',
-  //     message: 'Invalid ID'
-  //   });
-  // }
+
+exports.deleteStudent = async (req, res) =>{
+    try{
+        let id = req.params.id;
+        await Student.findByIdAndDelete(id);
+        res.status(200).json({
+            status: 'success',
+          });
+    }catch(error){
+        res.status(404).json({
+            status: 'fail',
+            error: error.message
+          });
+    }
+
+
   //Can also be 204 if you are not returning anything in the response
-  res.status(200).json({
-    status: 'success',
-    data:{
-      student: '[]'
-    }
-  });
+
 }

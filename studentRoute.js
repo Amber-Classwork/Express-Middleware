@@ -7,7 +7,7 @@ const { getAllStudents,
         checkStudentID
       } = require('./studentController');
 
-router.param('id', checkStudentID);
+// router.param('id', checkStudentID);
 
 
 router
@@ -16,9 +16,9 @@ router
     .post(CheckEmailAndName,createAdvanceStudent);
 router
     .route('/:id')
-    .get(studentController.getStudentByIdEx2)
+    .get(studentController.getStudentById)
     .patch(studentController.updateStudent)
-    .put(studentController.updateStudent2)
+    // .put(studentController.updateStudent)
     .delete(studentController.deleteStudent);
 
 module.exports = router;
